@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线 LS 拉汉词典 | iLexicon</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">iLexicon</span>
+                <span class="logo-sub">古典语言辞书平台</span>
+            </a>
+            <div class="nav-menu">
+                <a href="ls.html" class="nav-link active">LS 拉汉词典</a>
+                <a href="magnum.html" class="nav-link">大辞典</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <h1 class="hero-title">在线 LS 拉汉词典</h1>
+            <p class="hero-sub">Lewis &amp; Short 拉丁词典结构化底库 · 拉丁原文先行，汉译分批补校</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <div class="toolbar">
+                <input id="search" class="search-box" type="text" placeholder="输入拉丁头词检索，如 virtus, amo, lex…" autocomplete="off">
+            </div>
+            <div id="alpha" class="alpha-bar"></div>
+            <div id="meta" class="result-meta"></div>
+            <div id="results" class="result-list"></div>
+            <div id="detail" class="detail" style="display:none;"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-inner">
+            <span>LS 拉汉词典 · 初稿待校</span>
+            <span>书证保留拉丁原文与出处</span>
+        </div>
+    </footer>
+
+    <script src="assets/js/ls.js"></script>
+</body>
+</html>
