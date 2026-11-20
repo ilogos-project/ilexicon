@@ -123,35 +123,48 @@
         });
     }
 
-    /* 中栏：LS 原文词条 */
+    /* 中栏：完全保留 LS 原词典面貌（头词、词性 + 原文整段） */
     function renderDetail(e) {
         var head = e.headword_raw || e.lemma;
-        var html = "";
-        html += '<div class="detail-head">' +
+        var html = '<div class="detail-head">' +
             '<span class="detail-title">' + esc(head) + "</span>" +
             (e.pos ? '<span class="detail-pos">' + esc(e.pos) + "</span>" : "") +
-            (e.crossref ? '<span class="tag">交叉引用</span>' : "") +
             "</div>";
-        if (e.etymology_raw) {
-            html += '<div class="detail-etym">词源：' + esc(e.etymology_raw) + "</div>";
-        }
-        html += '<h4 class="detail-section">原文释义</h4>';
         html += '<div class="detail-body">' + esc(e.raw) + "</div>";
         detail.innerHTML = html;
     }
 
-    /* 右栏：汉译（待分批补校） */
+    /* 右栏：结构化汉译（词性 / 变格 / 参见 / 义项 / 例句） */
     function renderZh(e) {
+        var pos = (e.pos || "").trim();
+        var infl = (e.infl || "").trim();
+        var xref = (e.xref || "").trim();
         var zh = (e.def_zh || "").trim();
         var ex = (e.examples_zh || "").trim();
         var html = '<h4 class="zh-panel-title">汉译</h4>';
+
+        if (pos || infl) {
+            html += '<div class="zh-meta">';
+            if (pos) html += '<span class="zh-pos">' + esc(pos) + "</span>";
+            if (infl) html += '<span class="zh-infl">' + esc(infl) + "</span>";
+            html += "</div>";
+        }
+        if (xref) {
+            html += '<div class="zh-xref">参见：' + esc(xref) + "</div>";
+        }
         if (zh) {
-            html += '<div class="zh-block"><div>' + esc(zh) + "</div></div>";
+            var lines = zh.split(/\n+/).filter(Boolean);
+            html += '<div class="zh-block">';
+            lines.forEach(function (line, i) {
+                html += '<div class="zh-sense">' + esc(line) + "</div>";
+            });
+            html += "</div>";
         } else {
             html += '<div class="zh-block pending">汉译待补（初稿未译）</div>';
         }
         if (ex) {
-            html += '<h4 class="detail-section">例句汉译</h4><div class="zh-block">' + esc(ex) + "</div>";
+            html += '<h4 class="detail-section">例句汉译</h4>';
+            html += '<div class="zh-block">' + esc(ex) + "</div>";
         }
         html += '<p class="zh-note">义项与例句汉译分批补校；语法术语、作者与书名缩略保留原文。</p>';
         zhPanel.innerHTML = html;

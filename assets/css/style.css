@@ -393,6 +393,21 @@ a:hover { color: var(--color-primary-dark); }
     line-height: 1.6;
 }
 
+.zh-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: var(--spacing-sm); }
+.zh-pos,
+.zh-infl {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+.zh-xref {
+    font-size: 0.88rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+.zh-sense { margin: 6px 0; line-height: 1.7; }
+.zh-sense + .zh-sense { margin-top: 8px; }
+
 /* 空状态占位 */
 .placeholder {
     text-align: center;
