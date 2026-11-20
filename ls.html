@@ -28,20 +28,31 @@
     <header class="hero">
         <div class="container">
             <h1 class="hero-title">LS拉汉词典</h1>
-            <p class="hero-sub">拉丁原文释义先行，汉译分批补校。</p>
         </div>
     </header>
 
     <main class="container">
-        <section class="section">
-            <div class="toolbar">
-                <input id="search" class="search-box" type="text" placeholder="输入拉丁头词检索，如 virtus, amo, lex…" autocomplete="off">
-            </div>
-            <div id="alpha" class="alpha-bar"></div>
-            <div id="meta" class="result-meta"></div>
-            <div id="results" class="result-list"></div>
-            <div id="detail" class="detail" style="display:none;"></div>
-        </section>
+        <div class="lex-layout">
+            <!-- 左栏：字母 + 词条列表 -->
+            <aside class="lex-side">
+                <div class="toolbar">
+                    <input id="search" class="search-box" type="text" placeholder="检索拉丁头词…" autocomplete="off">
+                </div>
+                <div id="alpha" class="alpha-bar"></div>
+                <div id="meta" class="result-meta"></div>
+                <div id="results" class="entry-list"></div>
+            </aside>
+
+            <!-- 中栏：LS 原文词条 -->
+            <section class="lex-main">
+                <div id="detail" class="detail"></div>
+            </section>
+
+            <!-- 右栏：汉译 -->
+            <aside class="lex-zh">
+                <div id="zh-panel" class="zh-panel"></div>
+            </aside>
+        </div>
     </main>
 
     <footer>

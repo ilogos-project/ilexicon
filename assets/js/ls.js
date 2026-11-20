@@ -1,4 +1,4 @@
-/* iLexicon · LS 拉汉词典前端（纯静态，按需加载分片） */
+/* iLexicon · LS 拉汉词典前端（纯静态，三栏：左词条 / 中原文 / 右汉译） */
 (function () {
     "use strict";
 
@@ -9,7 +9,8 @@
 
     var $ = function (id) { return document.getElementById(id); };
     var searchBox = $("search"), alphaBar = $("alpha"),
-        meta = $("meta"), list = $("results"), detail = $("detail");
+        meta = $("meta"), list = $("results"),
+        detail = $("detail"), zhPanel = $("zh-panel");
 
     function esc(s) {
         return String(s == null ? "" : s)
@@ -20,6 +21,19 @@
     function firstLetter(lemma) {
         var m = /[a-zA-Z]/.exec(lemma || "");
         return m ? m[0].toLowerCase() : "#";
+    }
+
+    /* ---------- 初始占位 ---------- */
+    function renderPlaceholders() {
+        detail.innerHTML =
+            '<div class="placeholder">' +
+            '<i class="fas fa-book-open"></i>' +
+            '<p>从左侧选择词条，或在上方检索拉丁头词。</p>' +
+            "</div>";
+        zhPanel.innerHTML =
+            '<div class="placeholder">' +
+            "<p>汉译将在此栏呈现。</p>" +
+            "</div>";
     }
 
     function loadIndex() {
@@ -62,18 +76,17 @@
 
     function renderList() {
         var hits = filtered();
-        var total = hits.length;
         var shown = hits.slice(0, MAX_RESULTS);
-        meta.textContent = "共 " + total + " 条" + (total > MAX_RESULTS ? "，显示前 " + MAX_RESULTS + " 条" : "");
+        meta.textContent = "";
         list.innerHTML = "";
         if (!shown.length) {
-            list.innerHTML = '<div class="result-item"><span class="pending">无匹配条目</span></div>';
+            list.innerHTML = '<div class="entry-item pending">无匹配条目</div>';
             return;
         }
         shown.forEach(function (it) {
             var seq = it[0], lemma = it[1], pos = it[2], block = it[3];
             var item = document.createElement("div");
-            item.className = "result-item";
+            item.className = "entry-item" + (String(seq) === String(state.activeSeq) ? " active" : "");
             item.innerHTML =
                 '<span class="result-head">' + esc(lemma) + "</span>" +
                 '<span class="result-pos">' + esc(pos) + "</span>";
@@ -92,30 +105,27 @@
             .then(function (data) { blockCache[block] = data; return data; });
     }
 
-    function showDetailMessage(text) {
-        detail.style.display = "block";
-        detail.innerHTML = '<div class="pending">' + esc(text) + "</div>";
-    }
-
     function openEntry(seq, block) {
-        detail.style.display = "block";
         detail.innerHTML = '<div class="loading">正在加载条目…</div>';
+        zhPanel.innerHTML = "";
         loadBlock(block).then(function (data) {
             var entry = data.find(function (d) { return String(d.seq) === String(seq); });
             if (entry) {
+                state.activeSeq = entry.seq;
                 renderDetail(entry);
+                renderZh(entry);
+                renderList();   // 刷新左栏高亮
             } else {
-                showDetailMessage("未找到该条目详情。");
+                detail.innerHTML = '<div class="pending">未找到该条目详情。</div>';
             }
         }).catch(function () {
-            showDetailMessage("条目加载失败，请检查网络后重试。");
+            detail.innerHTML = '<div class="pending">条目加载失败，请检查网络后重试。</div>';
         });
     }
 
+    /* 中栏：LS 原文词条 */
     function renderDetail(e) {
-        state.activeSeq = e.seq;
         var head = e.headword_raw || e.lemma;
-        var zh = (e.def_zh || "").trim();
         var html = "";
         html += '<div class="detail-head">' +
             '<span class="detail-title">' + esc(head) + "</span>" +
@@ -125,16 +135,26 @@
         if (e.etymology_raw) {
             html += '<div class="detail-etym">词源：' + esc(e.etymology_raw) + "</div>";
         }
+        html += '<h4 class="detail-section">原文释义</h4>';
+        html += '<div class="detail-body">' + esc(e.raw) + "</div>";
+        detail.innerHTML = html;
+    }
+
+    /* 右栏：汉译（待分批补校） */
+    function renderZh(e) {
+        var zh = (e.def_zh || "").trim();
+        var ex = (e.examples_zh || "").trim();
+        var html = '<h4 class="zh-panel-title">汉译</h4>';
         if (zh) {
-            html += '<div class="zh-block"><h4>汉译</h4><div>' + esc(zh) + "</div></div>";
+            html += '<div class="zh-block"><div>' + esc(zh) + "</div></div>";
         } else {
             html += '<div class="zh-block pending">汉译待补（初稿未译）</div>';
         }
-        html += '<h4 style="font-family:var(--font-serif);margin:16px 0 6px;">原文释义</h4>';
-        html += '<div class="detail-body">' + esc(e.raw) + "</div>";
-        detail.innerHTML = html;
-        detail.style.display = "block";
-        detail.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (ex) {
+            html += '<h4 class="detail-section">例句汉译</h4><div class="zh-block">' + esc(ex) + "</div>";
+        }
+        html += '<p class="zh-note">义项与例句汉译分批补校；语法术语、作者与书名缩略保留原文。</p>';
+        zhPanel.innerHTML = html;
     }
 
     var debounce;
@@ -142,10 +162,10 @@
         clearTimeout(debounce);
         debounce = setTimeout(function () {
             state.query = searchBox.value;
-            detail.style.display = "none";   // 新检索时收起旧详情
             renderList();
         }, 120);
     });
 
+    renderPlaceholders();
     loadIndex();
 })();
