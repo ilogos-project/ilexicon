@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iLexicon | 古典语言辞书平台</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo-link">
-                <span class="logo-text">iLexicon</span>
-                <span class="logo-sub">古典语言辞书平台</span>
-            </a>
+        <div class="container nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="logo-link">
+                    <i class="fas fa-book-open logo-icon"></i>
+                    <span class="logo-text">iLexicon</span>
+                </a>
+            </div>
             <div class="nav-menu">
-                <a href="ls.html" class="nav-link">LS 拉汉词典</a>
+                <a href="ls.html" class="nav-link">LS拉汉词典</a>
                 <a href="magnum.html" class="nav-link">大辞典</a>
             </div>
         </div>
@@ -31,22 +35,22 @@
     <main class="container">
         <section class="section">
             <div class="grid">
-                <!-- 版块一：在线 LS 拉汉词典 -->
+                <!-- 版块一：LS拉汉词典 -->
                 <div class="card">
-                    <div class="card-icon">❦</div>
-                    <h2 class="card-title">在线 LS 拉汉词典</h2>
-                    <div class="card-title-latin">Lexicon Latinum–Sinicum (LS)</div>
-                    <p class="card-brief">基于 Lewis &amp; Short 拉丁词典结构化底库，提供头词检索与条目浏览；拉丁原文释义先行，汉译分批补校。</p>
-                    <a href="ls.html" class="btn btn-primary">进入词典 <span>→</span></a>
+                    <div class="card-icon"><i class="fas fa-book-open"></i></div>
+                    <h2 class="card-title">LS拉汉词典</h2>
+                    <div class="card-actions">
+                        <a href="ls.html" class="tool-link">进入词典 <i class="fas fa-arrow-right"></i></a>
+                    </div>
                 </div>
 
                 <!-- 版块二：古典拉丁语汉语大辞典 -->
                 <div class="card">
-                    <div class="card-icon">✦</div>
+                    <div class="card-icon"><i class="fas fa-landmark"></i></div>
                     <h2 class="card-title">古典拉丁语汉语大辞典</h2>
-                    <div class="card-title-latin">Magnum Lexicon Latino-Sericum</div>
-                    <p class="card-brief">自主编纂的拉汉大辞典版块，收录词源、义项、书证与汉译；目前编纂中，预留后续扩展其他辞书。</p>
-                    <a href="magnum.html" class="btn btn-outline">查看版块 <span>→</span></a>
+                    <div class="card-actions">
+                        <a href="magnum.html" class="tool-link">查看版块 <i class="fas fa-arrow-right"></i></a>
+                    </div>
                 </div>
             </div>
         </section>

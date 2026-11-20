@@ -24,9 +24,14 @@
 
     function loadIndex() {
         return fetch("index.json")
-            .then(function (r) { return r.json(); })
+            .then(function (r) {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.json();
+            })
             .then(function (data) { INDEX = data; renderAlpha(); renderList(); })
-            .catch(function () { meta.textContent = "索引加载失败，请通过本地服务器或 Pages 访问。"; });
+            .catch(function () {
+                meta.textContent = "索引加载失败，请通过本地服务器或 Pages 访问。";
+            });
     }
 
     function renderAlpha() {
@@ -80,14 +85,30 @@
     function loadBlock(block) {
         if (blockCache[block]) return Promise.resolve(blockCache[block]);
         return fetch("data/" + block + ".json")
-            .then(function (r) { return r.json(); })
+            .then(function (r) {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.json();
+            })
             .then(function (data) { blockCache[block] = data; return data; });
     }
 
+    function showDetailMessage(text) {
+        detail.style.display = "block";
+        detail.innerHTML = '<div class="pending">' + esc(text) + "</div>";
+    }
+
     function openEntry(seq, block) {
+        detail.style.display = "block";
+        detail.innerHTML = '<div class="loading">正在加载条目…</div>';
         loadBlock(block).then(function (data) {
             var entry = data.find(function (d) { return String(d.seq) === String(seq); });
-            if (entry) renderDetail(entry);
+            if (entry) {
+                renderDetail(entry);
+            } else {
+                showDetailMessage("未找到该条目详情。");
+            }
+        }).catch(function () {
+            showDetailMessage("条目加载失败，请检查网络后重试。");
         });
     }
 
@@ -109,11 +130,11 @@
         } else {
             html += '<div class="zh-block pending">汉译待补（初稿未译）</div>';
         }
-        html += '<h4 style="font-family:var(--serif);margin:16px 0 6px;">原文释义</h4>';
+        html += '<h4 style="font-family:var(--font-serif);margin:16px 0 6px;">原文释义</h4>';
         html += '<div class="detail-body">' + esc(e.raw) + "</div>";
         detail.innerHTML = html;
         detail.style.display = "block";
-        detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        detail.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     var debounce;
@@ -121,6 +142,7 @@
         clearTimeout(debounce);
         debounce = setTimeout(function () {
             state.query = searchBox.value;
+            detail.style.display = "none";   // 新检索时收起旧详情
             renderList();
         }, 120);
     });
